@@ -85,19 +85,19 @@ Progress is tracked in:
 
 ### Clone the repository
 ```bash
-git clone https://github.com/<your-username>/<your-repo-name>.git
+git clone https://github.com/akib35/eRecruitment.git
 ```
 ### Navigate to project folder
 ```bash
-cd <your-repo-name>
+cd src/backend/recruitment-system
 ```
 ### Install dependencies
 ```bash
-npm install   # or pip install -r requirements.txt (for Django)
+ ./mvnw clean install
 ```
 ### Run development server
 ```bash
-npm run dev   # or python manage.py runserver
+ ./mvnw spring-boot:run
 ```
 
 ---
