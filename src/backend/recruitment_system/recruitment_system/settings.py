@@ -132,3 +132,9 @@ CORS_ALLOWED_ORIGINS = [
 
 # Or for development only, you can use this (less secure):
 # CORS_ALLOW_ALL_ORIGINS = True
+
+# Media files configuration
+import os
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

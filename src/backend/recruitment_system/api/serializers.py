@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, JobRequest
+from .models import UserProfile, JobRequest, Candidate, Interview, ActionLog
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,3 +28,24 @@ class JobRequestSerializer(serializers.ModelSerializer):
         model = JobRequest
         fields = "__all__"
         read_only_fields = ("created_at", "updated_at")
+
+
+class CandidateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Candidate
+        fields = "__all__"
+        read_only_fields = ("created_at", "updated_at")
+
+
+class InterviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Interview
+        fields = "__all__"
+        read_only_fields = ("created_at", "updated_at")
+
+
+class ActionLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActionLog
+        fields = "__all__"
+        read_only_fields = ("timestamp",)

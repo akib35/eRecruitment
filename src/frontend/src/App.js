@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
-import { authAPI, jobRequestAPI } from './services/api';
+import { authAPI } from './services/api';
+import RecruiterComponent from './components/RecruiterComponent';
+import HRComponent from './components/HRComponent';
+import FinalConfirmerComponent from './components/FinalConfirmerComponent';
+import AdminComponent from './components/AdminComponent';
 import './App.css';
 
 function App() {
     const [currentUser, setCurrentUser] = useState(null);
     const [loginData, setLoginData] = useState({ username: '', password: '' });
-    const [jobRequest, setJobRequest] = useState({
-        position: '',
-        department: '',
-        justification: '',
-        number_of_openings: 1
-    });
-    const [pendingRequests, setPendingRequests] = useState([]);
     const [message, setMessage] = useState('');
 
     const handleLogin = async (e) => {
@@ -36,39 +33,18 @@ function App() {
         }
     };
 
-    const handleCreateJobRequest = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await jobRequestAPI.createJobRequest(jobRequest);
-            setMessage('Job request created successfully!');
-            setJobRequest({
-                position: '',
-                department: '',
-                justification: '',
-                number_of_openings: 1
-            });
-        } catch (error) {
-            console.error('Job request error:', error);
-            if (error.response) {
-                setMessage('Error creating job request: ' + (error.response.data || 'Server error'));
-            } else {
-                setMessage('Error: ' + error.message);
-            }
-        }
-    };
-
-    const handleGetPendingRequests = async () => {
-        try {
-            const response = await jobRequestAPI.getPendingRequests();
-            setPendingRequests(response.data);
-            setMessage('Pending requests loaded!');
-        } catch (error) {
-            console.error('Pending requests error:', error);
-            if (error.response) {
-                setMessage('Error loading pending requests: ' + (error.response.data || 'Server error'));
-            } else {
-                setMessage('Error: ' + error.message);
-            }
+    const renderDashboard = () => {
+        switch (currentUser.role) {
+            case 'RECRUITER':
+                return <RecruiterComponent setMessage={setMessage} />;
+            case 'HR':
+                return <HRComponent setMessage={setMessage} />;
+            case 'FINAL_CONFIRMER':
+                return <FinalConfirmerComponent setMessage={setMessage} />;
+            case 'ADMIN':
+                return <AdminComponent setMessage={setMessage} />;
+            default:
+                return <div>Unknown role</div>;
         }
     };
 
@@ -107,59 +83,7 @@ function App() {
                             <button onClick={() => setCurrentUser(null)}>Logout</button>
                         </div>
 
-                        {currentUser.role === 'RECRUITER' && (
-                            <div className="job-request-form">
-                                <h3>Create Job Request</h3>
-                                <form onSubmit={handleCreateJobRequest}>
-                                    <input
-                                        type="text"
-                                        placeholder="Position"
-                                        value={jobRequest.position}
-                                        onChange={(e) => setJobRequest({ ...jobRequest, position: e.target.value })}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Department"
-                                        value={jobRequest.department}
-                                        onChange={(e) => setJobRequest({ ...jobRequest, department: e.target.value })}
-                                        required
-                                    />
-                                    <textarea
-                                        placeholder="Justification"
-                                        value={jobRequest.justification}
-                                        onChange={(e) => setJobRequest({ ...jobRequest, justification: e.target.value })}
-                                        required
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Number of Openings"
-                                        value={jobRequest.number_of_openings}
-                                        onChange={(e) => setJobRequest({ ...jobRequest, number_of_openings: parseInt(e.target.value) })}
-                                        min="1"
-                                        required
-                                    />
-                                    <button type="submit">Submit Job Request</button>
-                                </form>
-                            </div>
-                        )}
-
-                        {(currentUser.role === 'HR' || currentUser.role === 'ADMIN') && (
-                            <div className="pending-requests">
-                                <h3>Pending Requests</h3>
-                                <button onClick={handleGetPendingRequests}>Load Pending Requests</button>
-                                <div className="requests-list">
-                                    {pendingRequests.map(request => (
-                                        <div key={request.id} className="request-item">
-                                            <h4>{request.position} - {request.department}</h4>
-                                            <p>Justification: {request.justification}</p>
-                                            <p>Openings: {request.number_of_openings}</p>
-                                            <p>Status: {request.status}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                        {renderDashboard()}
                     </div>
                 )}
             </header>
